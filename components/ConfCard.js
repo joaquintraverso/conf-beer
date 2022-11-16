@@ -13,7 +13,7 @@ export default function ConfCard({ data }) {
           <Text style={styles.textChef}>{chef}</Text>
         </View>
         <TouchableOpacity
-          onPress={() => {navigation.navigate('Conference', {id: data.id})}}
+          onPress={() => {navigation.navigate('Conference', {data: data.data()})}}
         >
           <Image style={styles.img} source={{uri: img}}/>
         </TouchableOpacity>

@@ -14,7 +14,8 @@ export default function Form({setForm, placeholder}) {
           style={styles.input}
           onChangeText={(text) => setForm(text)}
           placeholder={placeholder}
-          secureTextEntry={isPassword(placeholder)}/>
+          secureTextEntry={isPassword(placeholder)}
+          />
       </View>
     </View>
   )

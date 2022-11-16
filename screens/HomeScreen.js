@@ -5,8 +5,6 @@ import { initializeApp } from 'firebase/app';
 import { firebaseConfig } from '../firebase-config';
 import ConfCard from '../components/ConfCard'
 
-
-
 export default function HomeScreen() {
   
   const app = initializeApp(firebaseConfig)

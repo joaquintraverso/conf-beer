@@ -1,21 +1,40 @@
 import React, { useState } from 'react';
-import { TextInput, View, Text, Button, TouchableOpacity, StyleSheet, Alert, ScrollView } from 'react-native';
-import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
+import { View, Text, TouchableOpacity, StyleSheet, Alert, ScrollView } from 'react-native';
+import { getAuth, signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
 import { initializeApp } from 'firebase/app';
 import { firebaseConfig } from '../firebase-config';
 import { useNavigation } from '@react-navigation/native';
 import Form from '../components/Form';
 import Header from '../components/Header';
+import { AntDesign } from '@expo/vector-icons';
 
 export default function LoginScreen() {
   const navigation = useNavigation();
-
+  
   const [email, setEmail] = useState([])
   const [password, setPassword] = useState([])
-
+  
   const app = initializeApp(firebaseConfig)
   const auth = getAuth(app);
-
+  
+  const provider = new GoogleAuthProvider();
+  
+  const loginWithGoogle = () => {
+    signInWithPopup(auth, provider)
+    .then((result) => {
+      navigation.navigate('Home')
+      console.log('Login')
+      const user = result.user;
+    })
+    .catch((error)=>{
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        const email = error.customData.email;
+        const credential = GoogleAuthProvider.credentialFromError(error);
+        alert(errorCode, errorMessage, email, credential)
+    })
+  }
+  
   const handleSignIn = () => {
     signInWithEmailAndPassword(auth, email, password)
     .then((userCredential) =>{
@@ -29,18 +48,18 @@ export default function LoginScreen() {
       Alert.alert(error.message)
     })
   };
-
+  
   return (
     <View style={styles.container}>
       <Header 
         title= 'Bienvenido a ConfBeer'
         subtitle= 'Por favor, ingrese con su cuenta'
-      />
+        />
       <ScrollView>
         <Form
           setForm = {setEmail}
           placeholder = 'example@email.com'
-        />
+          />
         <Form
           setForm = {setPassword}
           placeholder = 'contraseña'
@@ -52,8 +71,13 @@ export default function LoginScreen() {
             <Text style={styles.textButton}>Login</Text>
           </TouchableOpacity>
           <Text style={styles.text}>O continúe con Google</Text>
-          <TouchableOpacity style={styles.buttonGoogle}>
-            <Text style={styles.textButton}>Google</Text>
+          <TouchableOpacity 
+            style={styles.buttonGoogle}
+            onPress={() => {loginWithGoogle()}}  
+          >
+            <Text style={styles.textButton}>
+              <AntDesign name="google" size={15} color="white" /> Google
+            </Text>
           </TouchableOpacity>
         </View>
         <View style={styles.containerRegister}>

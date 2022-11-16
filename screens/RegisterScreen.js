@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import { View, Text, Button, TouchableOpacity, StyleSheet, Alert, ScrollView } from 'react-native';
 import Form from '../components/Form';
-import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
+import { getAuth, createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
 import { initializeApp } from 'firebase/app';
 import { firebaseConfig } from '../firebase-config';
 import Header from '../components/Header';
@@ -14,6 +14,7 @@ export default function Register() {
   const [lastName, setLastName] = useState([])
   const [email, setEmail] = useState([])
   const [password, setPassword] = useState([])
+  const noPhoto = 'https://uxwing.com/wp-content/themes/uxwing/download/peoples-avatars/no-profile-picture-icon.png'
 
   const app = initializeApp(firebaseConfig)
   const auth = getAuth(app);
@@ -23,8 +24,14 @@ export default function Register() {
     .then((userCredential) => {
       console.log('Register')
       const user = userCredential.user;
-      navigation.navigate('Login')
-      //console.log(user)
+      updateProfile(user, {
+        displayName: `${name} ${lastName}`, photoURL: `${noPhoto}`
+      }).then(() => {
+        navigation.navigate('Login')
+      }).catch((error) => {
+        console.log(error)
+        Alert.alert(error.message)
+      });  
     })
     .catch(error => {
       console.log(error)
